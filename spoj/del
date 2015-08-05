@@ -1,0 +1,14 @@
+#include<iostream>
+#include<stdlib.h>
+#include<vector>
+#include<algorithm>
+#include<utility>
+#define f(i,a,n) for(i=a;i<n;i++)
+#define spc " "
+#include<cstdio>
+int main()
+{
+float a;
+a = 0.05;
+printf("%.2f",a);
+}
