@@ -98,6 +98,7 @@ void si(int &n){
     if(neg)n=-n;
 }
 int print(queue<int> y){
+	cout << "Prinitng ";
     while(!y.empty()){
         cout << y.front() << " ";
         y.pop();
@@ -107,22 +108,23 @@ int print(queue<int> y){
 }
 
 int bfs(bool visited[], queue<bool> &que, int r, int c){
-	int temp, tempp;
+	int temp;
 	queue <int > output;
 	int n = r * c;
 	while(!que.empty()){
 		temp = que.front();
-		if ((temp % c)){
-			if(!visited[temp -1])que.push(temp -1);
+		cout << "Front: " << temp << endl;
+		if (temp % c && !visited[temp -1]){
+			visited[temp - 1] = 1;que.push(temp - 1);
 		}
-		if(temp % c != c-1){
-			if(!visited[temp + 1])que.push(temp + 1);
+		if(temp % c != c-1 && !visited[temp + 1]){
+			visited[temp + 1] = 1;que.push(temp + 1);
 		}
-		if ((temp / c)){
-			if(!visited[temp - c])que.push(temp - c);
+		if (temp / c && !visited[temp + 1]){
+			visited[temp - c] = 1;que.push(temp - c);
 		}
-		if(temp / c != r-1){
-			if(!visited[temp + c])que.push(temp + c);
+		if(temp / c != r-1 && !visited[temp + c]){
+			visited[temp + c] = 1;que.push(temp + c);
 		}
 		que.pop();
 		output.push(temp);
@@ -135,12 +137,15 @@ int number_islands(bool graph[], int r, int c){
 	int i;
 	RNG(i, n){
 		if(!graph[i]) visited[i] = 1;
+		else visited[i] = 0;
 	}
 	queue<bool> que;
-	int count;
+	cout << "reached point 1\n";
+	int count = 0;
 	RNG(i, n){
 		if (!visited[i]){
-			que.push(i);
+			que.push(graph[i]);
+			cout << "Pushing :" << graph[i] << i << endl;
 			bfs(visited, que, r, c);
 			count++;
 		}
@@ -165,8 +170,9 @@ int main(){
 			if(p == 'o') graph[i] =1;
 			else graph[i] = 0;
 		}
+		RNG(i, n) cout << graph[i];
 		cout << "input complete\n";
-		int x = number_islands(graph, r, c);
+		cout << "Islands: " << number_islands(graph, r, c);
 	}
 return 0;
 }
