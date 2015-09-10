@@ -1,0 +1,26 @@
+struct subsequence
+{
+int first,last,sum;
+}s;
+
+function(array,low,high)
+{
+    int till_max=0;
+    s.first=0;s.last=0;s.sum=0;
+    for(i=low;i<high;i++){
+        if(till_max+array[i]>array[i]){
+            s.first=s.first;
+            s.last=i;
+            till_max+=array[i];
+        }
+        else{
+             s.first=i;
+             s.last=i;
+             till_max=array[i];
+        }
+        if(till_max in range){
+             s.sum=till_max;
+             printf("print values between first=%d and last=%d and sum=%d",s.first,s.last,s.sum);
+             }
+        }
+}

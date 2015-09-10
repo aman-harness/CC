@@ -84,12 +84,12 @@ int main(){
     f(i,0,n) cin >> input[i].first;
     find(n);
     calc(n);
-    sort(input, input + n);
+    // sort(input, input + n);
     countt[0] = 1;
     f(i, 1, n) { countt[i] = countt[i-1] + input[i].second; cout << countt[i] << endl;}
     while(m--){
     	cin >> sign >> cond >> turn;
-    	loc = LessThanEqualBinSearch(cond, n);
+    	loc = 0;
     	cout << "Location --  " << loc << endl;
     	if(loc == -1 && sign == '>') if (turn == 'C') cout << "D"; else cout << "C";
     	else if(loc == -1 && sign == '<') answer(countt[n-1], turn);
@@ -105,4 +105,4 @@ int main(){
 
     }
     cout << endl;
-}
+}   

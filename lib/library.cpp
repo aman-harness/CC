@@ -1,3 +1,8 @@
+// checking wheteher a number is 
+/* Function to check if x is power of 2*/
+bool isPowerOfTwo(long long int a){
+    return x && (!(x&(x-1)));
+}
 
 // Assuming no duplicates
 
