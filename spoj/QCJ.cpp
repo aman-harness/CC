@@ -1,3 +1,4 @@
+
 #include <iostream>
 #include <vector>
 #include <algorithm>
@@ -33,7 +34,7 @@ using namespace std;
 #define e2      second
 
 #define INF     (int)1e9
-#define MOD     (int)(1e9+7)
+#define MOD     761238923
 #define LINF    (ll)1e18
 #define EPS     1e-11
 const double PI = acos(-1.0)
@@ -96,86 +97,23 @@ void si(int &n){
     for(;ch>47 && ch<58; ch=gc()) n = (n<<1)+(n<<3)+ch-48;
     if(neg)n=-n;
 }
-vector<double> conn_components;
-double mark;
-int bfs(bool visited[], queue<int> &que, int r, int c, int graph[]){
-	int temp;
-	int count = 0;
-	int flag = 0;
-	queue <int > output;
-	int n = r * c;
-	visited[que.front()] = 1;
-	while(!que.empty()){
-		temp = que.front();
-		if(temp == n-1) flag = 1;
-		//cout << "Front: " << temp << endl;
-		if (temp % c && !visited[temp -1]){
-			visited[temp - 1] = 1;que.push(temp - 1);
-		}
-		if(temp % c != c-1 && !visited[temp + 1]){
-			visited[temp + 1] = 1;que.push(temp + 1);
-		}
-		if (temp / c && !visited[temp - c]){
-			visited[temp - c] = 1;que.push(temp - c);
-		}
-		if(temp / c != r-1 && !visited[temp + c]){
-			visited[temp + c] = 1;que.push(temp + c);
-		}
-		que.pop();
-		// output.push(temp);
-		count ++;
-	}
-	if(flag) mark = count;
-	else conn_components.PB(count);
-	return flag;
-}
-int number_islands(int graph[], int r, int c){
-	int n = r * c;
-	bool visited[n];
-	int i;
-	RNG(i, n){
-		if(!graph[i]) visited[i] = 1;
-		else visited[i] = 0;
-	}
-	queue<int> que;
-	//cout << "reached point 1\n";
-	int count = 0;
-	RNG(i, n){
-		if (!visited[i]){
-			que.push(i);
-			//cout << "Pushing :" << graph[i] << i << endl;
-			bfs(visited, que, r, c, graph);
-			count++;
-		}
-	}
-	return count;
-}
 
 int main(){
-	// std::ios::sync_with_stdio(false);
-	int t, m, n, r, c, i, q;
-	char p;
-	cin >> t;
-	// t = 1;
-	while(t--){
-		cin >> r >> c;
-		// r = c = 3;
-		n  = r * c;
-		int graph[n];
-		i = 0;
-		RNG(i, n){
-			cin >> p;
-			if(p == 'o') graph[i] =1;
-			else graph[i] = 0;
+	std::ios::sync_with_stdio(false);
+	long long int dp[102][102];int n;
+	while(1){
+		cin >> n; if(!n) return 0;
+		RNG(i, n+1) RNG(j, n+1) dp[i][j] = 0;
+		FOR(i, 1, n+1) dp[0][i] = 1;
+		FOR(j, 1, n + 1) dp[j][0] = 0;
+		dp[0][0] = 1;
+		FOR(i, 1, n + 1){
+			FOR(j, 1, n + 1){
+				FOR(k, 0, j) dp[i][j] += dp[k][j - 1] % MOD;
+				dp[i][j] %= MOD;
+			}
 		}
-		double xx = number_islands(graph, r, c);
-		double ans = 1;
-
-		RNG(i, xx - 1) ans += conn_components[i]/(conn_components[i] + mark);
-		cout.precision(8);
-		cout << fixed << ans << endl;
-		conn_components.clear();
+		cout << dp[n][n] % MOD << endl;
 	}
-
 return 0;
 }

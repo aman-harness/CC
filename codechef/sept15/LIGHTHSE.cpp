@@ -96,86 +96,49 @@ void si(int &n){
     for(;ch>47 && ch<58; ch=gc()) n = (n<<1)+(n<<3)+ch-48;
     if(neg)n=-n;
 }
-vector<double> conn_components;
-double mark;
-int bfs(bool visited[], queue<int> &que, int r, int c, int graph[]){
-	int temp;
-	int count = 0;
-	int flag = 0;
-	queue <int > output;
-	int n = r * c;
-	visited[que.front()] = 1;
-	while(!que.empty()){
-		temp = que.front();
-		if(temp == n-1) flag = 1;
-		//cout << "Front: " << temp << endl;
-		if (temp % c && !visited[temp -1]){
-			visited[temp - 1] = 1;que.push(temp - 1);
-		}
-		if(temp % c != c-1 && !visited[temp + 1]){
-			visited[temp + 1] = 1;que.push(temp + 1);
-		}
-		if (temp / c && !visited[temp - c]){
-			visited[temp - c] = 1;que.push(temp - c);
-		}
-		if(temp / c != r-1 && !visited[temp + c]){
-			visited[temp + c] = 1;que.push(temp + c);
-		}
-		que.pop();
-		// output.push(temp);
-		count ++;
-	}
-	if(flag) mark = count;
-	else conn_components.PB(count);
-	return flag;
-}
-int number_islands(int graph[], int r, int c){
-	int n = r * c;
-	bool visited[n];
-	int i;
-	RNG(i, n){
-		if(!graph[i]) visited[i] = 1;
-		else visited[i] = 0;
-	}
-	queue<int> que;
-	//cout << "reached point 1\n";
-	int count = 0;
-	RNG(i, n){
-		if (!visited[i]){
-			que.push(i);
-			//cout << "Pushing :" << graph[i] << i << endl;
-			bfs(visited, que, r, c, graph);
-			count++;
-		}
-	}
-	return count;
-}
 
 int main(){
-	// std::ios::sync_with_stdio(false);
-	int t, m, n, r, c, i, q;
-	char p;
-	cin >> t;
-	// t = 1;
+	std::ios::sync_with_stdio(false);
+	int t;cin >> t;
+	int x[500000], y[500000];
+	int x_l, x_r, y_t, y_b;
+	int flag = 0;
 	while(t--){
-		cin >> r >> c;
-		// r = c = 3;
-		n  = r * c;
-		int graph[n];
-		i = 0;
-		RNG(i, n){
-			cin >> p;
-			if(p == 'o') graph[i] =1;
-			else graph[i] = 0;
+		flag = 0;
+		int n; cin >> n;
+		cin >> x[0] >> y[0];
+		x_l = 0; x_r = 0;
+		y_t = 0; y_b = 0;
+		FOR(i, 1, n){
+			cin >> x[i] >> y[i];
+			if(x[i] < x[x_l]) x_l = i;
+			else if(x[i] > x[x_r]) x_r = i;
+			if(y[i] < y[y_b]) y_b = i;
+			else if(y[i] > y[y_t]) y_t = i;
 		}
-		double xx = number_islands(graph, r, c);
-		double ans = 1;
-
-		RNG(i, xx - 1) ans += conn_components[i]/(conn_components[i] + mark);
-		cout.precision(8);
-		cout << fixed << ans << endl;
-		conn_components.clear();
+		FOR(i, 0, n){
+			 if(x[x_l] == x[i] && y[y_t] == y[i]) {cout << 1 << endl << i + 1 << " "<< "SE"<< endl;flag = 1;break;}
+			 else if(x[x_l] == x[i] && y[y_b] == y[i]) {cout << 1 << endl << i + 1 << " "<< "NE"<< endl;flag = 1;break;}
+			 else if(x[x_r] == x[i] && y[y_b] == y[i]) {cout << 1 << endl << i + 1 << " "<< "NW"<< endl;flag = 1;break;}
+			 else if(x[x_r] == x[i] && y[y_t] == y[i]) {cout << 1 << endl << i + 1 << " "<< "SW"<< endl;flag = 1;break;}
+		}
+		//      if(x_l == y_t){cout << 1 << endl << x_l + 1 << " "<< "SE"<< endl;}
+		// else if(x_l == y_b){cout << 1 << endl << x_l + 1 << " "<< "NE"<< endl;}
+		// else if(x_r == y_b){cout << 1 << endl << x_r + 1 << " "<< "NW"<< endl;}
+		// else if(x_r == y_t){cout << 1 << endl << x_r + 1 << " "<< "SW"<< endl;}
+		if(!flag){
+			cout << 2 << endl;
+			if(0);
+			else if(y[x_l] <= y[x_r]){
+				cout << x_l + 1 << " " << "NE" <<endl;
+				cout << x_r + 1 << " " << "SW" <<endl;
+			}
+			else{
+				cout << x_l + 1 << " " << "SE" <<endl;
+				cout << x_r + 1 << " " << "NW" <<endl;
+			}
+		}
 	}
-
 return 0;
 }
+// (NWNorth-Western, NENorth-Eastern, SWSouth-Western, SESouth-Eastern) 

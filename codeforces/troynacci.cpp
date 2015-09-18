@@ -1,3 +1,4 @@
+
 #include <iostream>
 #include <vector>
 #include <algorithm>
@@ -96,86 +97,49 @@ void si(int &n){
     for(;ch>47 && ch<58; ch=gc()) n = (n<<1)+(n<<3)+ch-48;
     if(neg)n=-n;
 }
-vector<double> conn_components;
-double mark;
-int bfs(bool visited[], queue<int> &que, int r, int c, int graph[]){
-	int temp;
-	int count = 0;
-	int flag = 0;
-	queue <int > output;
-	int n = r * c;
-	visited[que.front()] = 1;
-	while(!que.empty()){
-		temp = que.front();
-		if(temp == n-1) flag = 1;
-		//cout << "Front: " << temp << endl;
-		if (temp % c && !visited[temp -1]){
-			visited[temp - 1] = 1;que.push(temp - 1);
-		}
-		if(temp % c != c-1 && !visited[temp + 1]){
-			visited[temp + 1] = 1;que.push(temp + 1);
-		}
-		if (temp / c && !visited[temp - c]){
-			visited[temp - c] = 1;que.push(temp - c);
-		}
-		if(temp / c != r-1 && !visited[temp + c]){
-			visited[temp + c] = 1;que.push(temp + c);
-		}
-		que.pop();
-		// output.push(temp);
-		count ++;
-	}
-	if(flag) mark = count;
-	else conn_components.PB(count);
-	return flag;
-}
-int number_islands(int graph[], int r, int c){
-	int n = r * c;
-	bool visited[n];
-	int i;
-	RNG(i, n){
-		if(!graph[i]) visited[i] = 1;
-		else visited[i] = 0;
-	}
-	queue<int> que;
-	//cout << "reached point 1\n";
-	int count = 0;
-	RNG(i, n){
-		if (!visited[i]){
-			que.push(i);
-			//cout << "Pushing :" << graph[i] << i << endl;
-			bfs(visited, que, r, c, graph);
-			count++;
-		}
-	}
-	return count;
-}
 
 int main(){
-	// std::ios::sync_with_stdio(false);
-	int t, m, n, r, c, i, q;
-	char p;
-	cin >> t;
-	// t = 1;
-	while(t--){
-		cin >> r >> c;
-		// r = c = 3;
-		n  = r * c;
-		int graph[n];
-		i = 0;
-		RNG(i, n){
-			cin >> p;
-			if(p == 'o') graph[i] =1;
-			else graph[i] = 0;
-		}
-		double xx = number_islands(graph, r, c);
-		double ans = 1;
-
-		RNG(i, xx - 1) ans += conn_components[i]/(conn_components[i] + mark);
-		cout.precision(8);
-		cout << fixed << ans << endl;
-		conn_components.clear();
+	std::ios::sync_with_stdio(false);
+	int n, q, x, y, a, b, input[100005], qx, qy, func[100005];
+	int p[100005], count[100005], l, r;
+	memset(count, 0, sizeof(int) * n + 3);
+	memset(p, 0, sizeof(int) * n + 3);
+	si(n);si(q);si(x);si(y);si(a);si(b);
+	func[1] = a;func[2] = b;
+	FOR(i, 3, n + 1) func[i] = a * func[i -2] + b * func[i - 1];
+	FOR(i, 1, n+1) si(input[i]);
+	FOR(i, 0, q){
+		cin >> l >> r;
+		count[l]++;
+		p[l] += func[1];
+		if(r != l) p[l+1] += func[2];
+		p[r +1] += -func[r - l +1];
+		for(int i = 1; i < n+1; i++) cout << p[i] << " ";
+		cout << endl;
 	}
+	for(int i = 1; i < n+1; i++) cout << func[i] << " ";
+		cout << endl;
+	for(int i = 1; i < n+1; i++) cout << p[i] << " ";
+		cout << endl;
+	cout << "Here: " << endl;
+	for(int i = 1; i < n+1; i++) cout << count[i] << " ";
+		cout << endl;
+	FOR(i, 3, n+1){
+		if(!count[i - 1]) {p[i] = a * p[i-2] + b * p[i -1];
+			cout << "a:  ";
+			for(int i = 1; i < n+1; i++) cout << p[i] << " ";
+		cout << endl;
+		}
+		else{
+			p[i] = a * p[i-2] + b * (p[i -1] - count[i-1] * func[1]);
+		cout << "b: ";
+		for(int i = 1; i < n+1; i++) cout << p[i] << " ";
+		cout << endl;
+		}
+	}
+	for(int i = 1; i < n+1; i++) cout << p[i] << " ";
+		cout << endl;
+	FOR(i, 1, n + 1) cout << input[i] << " ";
 
 return 0;
 }
