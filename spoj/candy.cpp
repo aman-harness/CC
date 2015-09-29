@@ -1,3 +1,5 @@
+
+
 #include <iostream>
 #include <vector>
 #include <algorithm>
@@ -42,7 +44,7 @@ const double PI = acos(-1.0)
 #define pow2l(n) ((ll)1<<(n))
 #define MAX(a,b) ((a)>(b)?(a):(b))
 #define MIN(a,b) ((a)<(b)?(a):(b))
-#define ABS(n)   ((a)<0?-(a):(a))
+#define ABS(a)   ((a)<0?-(a):(a))
 #define MAXE(...)   max_element(__VA_ARGS__)
 #define MINE(...)   min_element(__VA_ARGS__)
 
@@ -96,41 +98,29 @@ void si(int &n){
     for(;ch>47 && ch<58; ch=gc()) n = (n<<1)+(n<<3)+ch-48;
     if(neg)n=-n;
 }
-long long int dp[1000000+1][2];
-int calc(string &str, int n, int l, int d){
-	reverse(str.begin(), str.end());
-	str += string(n - str.size(), '0');
-	// reverse(str.begin(), str.end());
-	// cout << str << endl;
-	if(str[0] == '1') {dp[0][0] = 1; dp[0][1] = 1;}
+
+int calc(int input[], int n){
+	int sum = 0;
+	RNG(i, n) sum += input[i];
+	// cout << sum << endl;
+	if(sum % n != 0) return -1;
 	else{
-		dp[0][1] = 0; dp[0][0] = 1;
+		int avg = sum / n;
+		sum = 0;
+		RNG(i, n) sum += ABS(avg - input[i]);
 	}
-	FOR(i, 1, n){
-		// FOR(j, 0, 2){
-			if(str[i] == '1') {dp[i][0] = dp[i-1][0]; dp[i][1] = dp[i-1][0] + dp[i-1][1];}
-			else{
-				dp[i][0] = dp[i-1][0] + dp[i-1][1]; dp[i][1] = dp[i - 1][1];
-
-			dp[i][0] %= d; dp[i][1] %= d;
-			// }
-		}
-	}
-	// RNG(i, n) cout << dp[i][0] << " "; cout << endl;
-	// RNG(i, n) cout << dp[i][1] << " "; cout << endl;
-	cout << dp[n-1][0] << endl;
+	return sum / 2;
 }
-
 int main(){
 	std::ios::sync_with_stdio(false);
-	int t; cin >> t;	
-	// int t = 1, d = MOD;
-	string x;
-	while(t--){
-		int n, l ,d; cin >> n >> l >> d;
-		cin >> x;
-		l = x.size();
-		calc(x, n, l, d);
-	} 
+	int n;
+	cin >> n;
+	while(n != -1){
+		int input[n];
+		RNG(i, n) cin >> input[i];
+		cout <<calc(input, n) << endl;
+		cin >> n;
+	}
+
 return 0;
 }

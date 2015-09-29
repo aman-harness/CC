@@ -1,3 +1,4 @@
+
 #include <iostream>
 #include <vector>
 #include <algorithm>
@@ -96,41 +97,38 @@ void si(int &n){
     for(;ch>47 && ch<58; ch=gc()) n = (n<<1)+(n<<3)+ch-48;
     if(neg)n=-n;
 }
-long long int dp[1000000+1][2];
-int calc(string &str, int n, int l, int d){
-	reverse(str.begin(), str.end());
-	str += string(n - str.size(), '0');
-	// reverse(str.begin(), str.end());
-	// cout << str << endl;
-	if(str[0] == '1') {dp[0][0] = 1; dp[0][1] = 1;}
-	else{
-		dp[0][1] = 0; dp[0][0] = 1;
-	}
-	FOR(i, 1, n){
-		// FOR(j, 0, 2){
-			if(str[i] == '1') {dp[i][0] = dp[i-1][0]; dp[i][1] = dp[i-1][0] + dp[i-1][1];}
-			else{
-				dp[i][0] = dp[i-1][0] + dp[i-1][1]; dp[i][1] = dp[i - 1][1];
+int maxx = 64, mm,n;
+map < pair<int , int >, int> m;
+char input[60][60];
+void dfs(int i, int j, int max){
+	// cout << "Called for: " << i << j;
+	if(maxx < input[i][j]) maxx = input[i][j];
+	if(m[MP(i, j)] == 1) return ;
 
-			dp[i][0] %= d; dp[i][1] %= d;
-			// }
-		}
-	}
-	// RNG(i, n) cout << dp[i][0] << " "; cout << endl;
-	// RNG(i, n) cout << dp[i][1] << " "; cout << endl;
-	cout << dp[n-1][0] << endl;
+	if(i > 0 && j >= 0) if(input[i][j] == input[i -1][j] - 1) {dfs(i-1, j, max + 1); m[MP(i - 1, j)] = 1;}
+	if(i > 0 && j > 0)  if(input[i][j ] == input[i -1][j - 1] - 1) {dfs(i-1, j - 1, max + 1); m[MP(i-1, j - 1)] = 1;}
+	if(i > 0 && j <  n - 1) if(input[i][j ] == input[i -1][j + 1] - 1) {dfs(i-1, j + 1, max + 1); m[MP(i-1, j + 1)] = 1;}
+
+	if(i >= 0 && j > 0)if(input[i][j] == input[i][j - 1] - 1) {dfs(i, j - 1, max + 1); m[MP(i, j - 1)] = 1;}
+	if(i >= 0 && j < (n - 1)) if(input[i][j] == input[i][j + 1] - 1) {dfs(i, j + 1, max + 1); m[MP(i, j + 1)] = 1;}
+
+	if(i < mm -1 && j >= 0) if(input[i][j] == input[i +1][j] - 1) {dfs(i+1, j, max + 1); m[MP(i + 1, j)] = 1;}
+	if(i < mm -1 && j > 0) if(input[i][j] == input[i +1][j - 1] - 1) {dfs(i+1, j - 1, max + 1); m[MP(i + 1, j - 1)] = 1;}
+	if(i < mm -1 && j < n -1) if(input[i][j] == input[i +1][j + 1] - 1) {dfs(i+1, j + 1, max + 1); m[MP(i + 1, j + 1)] = 1;}
+
+	return ;
 }
 
 int main(){
 	std::ios::sync_with_stdio(false);
-	int t; cin >> t;	
-	// int t = 1, d = MOD;
-	string x;
-	while(t--){
-		int n, l ,d; cin >> n >> l >> d;
-		cin >> x;
-		l = x.size();
-		calc(x, n, l, d);
-	} 
+	int dp[60][60];
+	int t, k = 1; cin >> mm >> n;
+	while(mm != 0 && n!=0)
+	{	maxx = 64; m.clear();
+		RNG(i, mm) RNG(j, n) cin >> input[i][j];
+		RNG(i, mm) RNG(j, n) if(input[i][j] == 'A') dfs(i, j, 1);
+		cout << "Case "<<k++ << ": "<< maxx - 64 << endl;
+		cin >> mm >> n;
+	}
 return 0;
 }

@@ -1,3 +1,4 @@
+
 #include <iostream>
 #include <vector>
 #include <algorithm>
@@ -81,7 +82,20 @@ typedef vector<vl>  vvl;
 typedef list<int>   li;
 typedef map<int,int> mii;
 
-template<typename T> T modPow(T b, T e, T m=(ll)MOD){T res=1;while(e){if(!(e&0x1))res=(res*b)%m;e>>=1;b=(b*b)%m;}return res; }
+
+ll modPow(ll a, ll b, ll c = MOD) {
+  if (b == 0)
+    return 1;
+  if (b == 1)
+    return a % c;
+  ll half = modPow(a, b/2) % MOD;
+  if (b%2)
+    return (((half % MOD)*(half % MOD)% MOD) *a) % c;
+  return ((half % MOD)*(half % MOD))%c;
+}
+
+
+// template<typename T> T modPow(T b, T e, T m=(ll)MOD){T res=1;while(e){if(!(e&0x1))res=(res*b)%m;e>>=1;b=(b*b)%m;}return res; }
 template<typename T> T gcd (T u, T v){ return (u==0||v==0||u==v)?(u|v):((~u&1)?((v&1)?gcd(u>>1,v):gcd(u>>1,v>>1)<<1):((~v&1)?gcd(u,v>>1):((u>v)?gcd((u-v)>>1,v):gcd((v-u)>>1,u)))); }
 template<typename T> T lcm (T a, T b){ return a*b/gcd(a,b); }
 //#undef DEBUG__
@@ -96,41 +110,29 @@ void si(int &n){
     for(;ch>47 && ch<58; ch=gc()) n = (n<<1)+(n<<3)+ch-48;
     if(neg)n=-n;
 }
-long long int dp[1000000+1][2];
-int calc(string &str, int n, int l, int d){
-	reverse(str.begin(), str.end());
-	str += string(n - str.size(), '0');
-	// reverse(str.begin(), str.end());
-	// cout << str << endl;
-	if(str[0] == '1') {dp[0][0] = 1; dp[0][1] = 1;}
-	else{
-		dp[0][1] = 0; dp[0][0] = 1;
-	}
-	FOR(i, 1, n){
-		// FOR(j, 0, 2){
-			if(str[i] == '1') {dp[i][0] = dp[i-1][0]; dp[i][1] = dp[i-1][0] + dp[i-1][1];}
-			else{
-				dp[i][0] = dp[i-1][0] + dp[i-1][1]; dp[i][1] = dp[i - 1][1];
-
-			dp[i][0] %= d; dp[i][1] %= d;
-			// }
-		}
-	}
-	// RNG(i, n) cout << dp[i][0] << " "; cout << endl;
-	// RNG(i, n) cout << dp[i][1] << " "; cout << endl;
-	cout << dp[n-1][0] << endl;
-}
-
+long long int factors[100002];
 int main(){
 	std::ios::sync_with_stdio(false);
-	int t; cin >> t;	
-	// int t = 1, d = MOD;
-	string x;
+	int t;
+	cin >> t;
 	while(t--){
-		int n, l ,d; cin >> n >> l >> d;
-		cin >> x;
-		l = x.size();
-		calc(x, n, l, d);
-	} 
+		long long int sum = 0;
+		int a, b, k;
+		cin >> a >> b >>k;
+		memset(factors, 0, sizeof(long long int)*(b + 2));
+		for(int i = a; i <= b; i++){
+			for(int j = 1; j <=sqrt(i); j++){
+				if(j == sqrt(i)) factors[j]++;
+				else if (i != 1){if(i % j == 0) {factors[j] += 1; factors[i / j] += 1;}}
+				else factors[1]++;
+			}
+		}
+		// RNG(i, b + 1) cout << i << " " << factors[i] << endl;
+		for(int i = 1; i <= b; i++){
+			if(factors[i]) sum += (((((ll)factors[i])) * ((ll)modPow ((ll)i, (ll)k)% MOD) % MOD)) % MOD;
+			sum %= MOD;
+		}
+		cout << sum << endl;
+	}
 return 0;
 }

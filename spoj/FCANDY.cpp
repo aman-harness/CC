@@ -1,3 +1,4 @@
+
 #include <iostream>
 #include <vector>
 #include <algorithm>
@@ -16,6 +17,7 @@
 #include <numeric>
 #include <stack>
 #include <utility>
+#include <iterator>
 using namespace std;
 
 #define s(n)    scanf("%d",&n)
@@ -96,41 +98,42 @@ void si(int &n){
     for(;ch>47 && ch<58; ch=gc()) n = (n<<1)+(n<<3)+ch-48;
     if(neg)n=-n;
 }
-long long int dp[1000000+1][2];
-int calc(string &str, int n, int l, int d){
-	reverse(str.begin(), str.end());
-	str += string(n - str.size(), '0');
-	// reverse(str.begin(), str.end());
-	// cout << str << endl;
-	if(str[0] == '1') {dp[0][0] = 1; dp[0][1] = 1;}
-	else{
-		dp[0][1] = 0; dp[0][0] = 1;
-	}
-	FOR(i, 1, n){
-		// FOR(j, 0, 2){
-			if(str[i] == '1') {dp[i][0] = dp[i-1][0]; dp[i][1] = dp[i-1][0] + dp[i-1][1];}
-			else{
-				dp[i][0] = dp[i-1][0] + dp[i-1][1]; dp[i][1] = dp[i - 1][1];
-
-			dp[i][0] %= d; dp[i][1] %= d;
-			// }
-		}
-	}
-	// RNG(i, n) cout << dp[i][0] << " "; cout << endl;
-	// RNG(i, n) cout << dp[i][1] << " "; cout << endl;
-	cout << dp[n-1][0] << endl;
-}
 
 int main(){
 	std::ios::sync_with_stdio(false);
-	int t; cin >> t;	
-	// int t = 1, d = MOD;
-	string x;
-	while(t--){
-		int n, l ,d; cin >> n >> l >> d;
-		cin >> x;
-		l = x.size();
-		calc(x, n, l, d);
-	} 
+	int k; si(k); int cal[k + 1], candy[k + 1];
+	RNG(i, k) cin >> candy[i] >> cal[i];
+	ll sum = 0;
+	FOR(i, 0, k) sum += candy[i] * cal[i];
+	ll t = sum;
+	sum /= 2; sum++;
+	int dp[k + 1][sum + 2];
+	int update[sum + 2], temp[sum + 2];
+	memset(dp, 0, sizeof(dp));
+	dp[0][0] = 1;
+	FOR(i, 1, candy[0] + 1) dp[0][cal[0] * i] = 1; 
+	FOR(i, 1, k){
+		memset(update, 0, sizeof(update));
+		memset(temp, 0, sizeof(temp));
+		FOR(j, 0, sum){
+			if(dp[i - 1][j]){
+				update[j] += 1; //cout <<"Updated " << j << " as 1";
+				if(candy[i] * cal[i] + j < sum) {update[(candy[i] + 1) * cal[i] + j] -= 1;}
+			}
+		}
+		FOR(j, 0, sum) if(update[j])cout << i << " " << j << ","; cout << endl;
+		for(int j = 0; j < sum;) {if(j + cal[i]  > sum) break; if(update[j]) {temp[j] = update[j]; temp[j + cal[i]] += update[j];} j++;}
+		cout << endl << endl;
+		if(i == 3) RNG(j, sum) cout << update[j] << " ";
+		FOR(j, 0, sum) dp[i][j] += temp[j];
+		FOR(j, 0, sum) if(update[j])cout << i << " " << j << ","; cout << endl;
+		FOR(j, 0, sum) if(dp[i][j])cout << i << " " << j << ","; cout << endl;
+	}
+	int ret = 0;
+	FOR(i, 0, sum) if(dp[k - 1][i]) ret = i;
+	// FOR(i, 0, k){
+	// 	FOR(j, 0, sum) if(dp[i][j]) cout << i << "  - " << j << endl; cout <<endl;
+	// }
+	cout << t << " " <<ret;
 return 0;
 }

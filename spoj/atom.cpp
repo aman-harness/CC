@@ -1,3 +1,4 @@
+
 #include <iostream>
 #include <vector>
 #include <algorithm>
@@ -87,7 +88,7 @@ template<typename T> T lcm (T a, T b){ return a*b/gcd(a,b); }
 //#undef DEBUG__
 ///////////////////////////////          FAST  IO          ///////////////////////////////////////
 #define gc getchar_unlocked
-void si(int &n){
+void si(long long int &n){
     register int ch=gc();
     int neg = 0;
     n=0;
@@ -96,41 +97,23 @@ void si(int &n){
     for(;ch>47 && ch<58; ch=gc()) n = (n<<1)+(n<<3)+ch-48;
     if(neg)n=-n;
 }
-long long int dp[1000000+1][2];
-int calc(string &str, int n, int l, int d){
-	reverse(str.begin(), str.end());
-	str += string(n - str.size(), '0');
-	// reverse(str.begin(), str.end());
-	// cout << str << endl;
-	if(str[0] == '1') {dp[0][0] = 1; dp[0][1] = 1;}
-	else{
-		dp[0][1] = 0; dp[0][0] = 1;
-	}
-	FOR(i, 1, n){
-		// FOR(j, 0, 2){
-			if(str[i] == '1') {dp[i][0] = dp[i-1][0]; dp[i][1] = dp[i-1][0] + dp[i-1][1];}
-			else{
-				dp[i][0] = dp[i-1][0] + dp[i-1][1]; dp[i][1] = dp[i - 1][1];
-
-			dp[i][0] %= d; dp[i][1] %= d;
-			// }
-		}
-	}
-	// RNG(i, n) cout << dp[i][0] << " "; cout << endl;
-	// RNG(i, n) cout << dp[i][1] << " "; cout << endl;
-	cout << dp[n-1][0] << endl;
-}
 
 int main(){
 	std::ios::sync_with_stdio(false);
-	int t; cin >> t;	
-	// int t = 1, d = MOD;
-	string x;
-	while(t--){
-		int n, l ,d; cin >> n >> l >> d;
-		cin >> x;
-		l = x.size();
-		calc(x, n, l, d);
-	} 
+	long long int p; si(p);
+	int mid;
+	while(p--){
+		long long int n, m, k; si(k); si(m); si(n);
+		n /= k;
+		int max = 65;
+		// if(n < 1000000000) max = 33;
+		// if(n < 100000) max = 17;
+		int start = -1;
+		while(max - start > 1){
+			mid = start + (max - start)/2;
+			if((long long int) pow(m, mid) >= n ) max = mid;
+			else start = mid;
+		} 
+		cout << start << mid  <<max    << endl;}
 return 0;
 }

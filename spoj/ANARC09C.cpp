@@ -1,3 +1,4 @@
+
 #include <iostream>
 #include <vector>
 #include <algorithm>
@@ -37,10 +38,10 @@ using namespace std;
 #define LINF    (ll)1e18
 #define EPS     1e-11
 const double PI = acos(-1.0)
-
+#define lli long long 
 #define pow2(n) (1<<(n))
 #define pow2l(n) ((ll)1<<(n))
-#define MAX(a,b) ((a)>(b)?(a):(b))
+// #define MAX(a,b) ((a)>(b)?(a):(b))
 #define MIN(a,b) ((a)<(b)?(a):(b))
 #define ABS(n)   ((a)<0?-(a):(a))
 #define MAXE(...)   max_element(__VA_ARGS__)
@@ -96,41 +97,67 @@ void si(int &n){
     for(;ch>47 && ch<58; ch=gc()) n = (n<<1)+(n<<3)+ch-48;
     if(neg)n=-n;
 }
-long long int dp[1000000+1][2];
-int calc(string &str, int n, int l, int d){
-	reverse(str.begin(), str.end());
-	str += string(n - str.size(), '0');
-	// reverse(str.begin(), str.end());
-	// cout << str << endl;
-	if(str[0] == '1') {dp[0][0] = 1; dp[0][1] = 1;}
-	else{
-		dp[0][1] = 0; dp[0][0] = 1;
-	}
-	FOR(i, 1, n){
-		// FOR(j, 0, 2){
-			if(str[i] == '1') {dp[i][0] = dp[i-1][0]; dp[i][1] = dp[i-1][0] + dp[i-1][1];}
-			else{
-				dp[i][0] = dp[i-1][0] + dp[i-1][1]; dp[i][1] = dp[i - 1][1];
+#define MAX 1000
 
-			dp[i][0] %= d; dp[i][1] %= d;
-			// }
-		}
-	}
-	// RNG(i, n) cout << dp[i][0] << " "; cout << endl;
-	// RNG(i, n) cout << dp[i][1] << " "; cout << endl;
-	cout << dp[n-1][0] << endl;
+#include <stdio.h>
+#include <string.h>
+ 
+// marks all mutiples of 'a' ( greater than 'a' but less than equal to 'n') as 1.
+bool arr[1000000];
+void markMultiples( int a, int n)
+{
+    int i = 2, num;
+    while ( (num = i*a) <= n )
+    {
+        arr[ num-1 ] = 1; // minus 1 because index starts from 0.
+        ++i;
+    }
 }
-
+ 
+// A function to print all prime numbers smaller than n
+void SieveOfEratosthenes(int orig, int n, vector<pii> &x)
+{
+    // There are no prime numbers smaller than 2
+    if (n >= 2)
+    {
+        // Create an array of size n and initialize all elements as 0
+        memset(arr, 0, sizeof(int) * 8);
+ 
+        /* Following property is maintained in the below for loop
+           arr[i] == 0 means i + 1 is prime
+           arr[i] == 1 means i + 1 is not prime */
+        for (int i=1; i<n; ++i)
+        {
+            if ( arr[i] == 0 )
+            {
+                //(i+1) is prime, print it and mark its multiples
+                if(orig % (i + 1) != 0) continue;
+                int s;
+                for(s = 2; s < 30; s++) if(orig % (int) pow(i+1, s) !=0) break; x.PB(MP(i+ 1, s-1));
+                markMultiples(i+1, n);
+            }
+        }
+    }
+}
 int main(){
 	std::ios::sync_with_stdio(false);
-	int t; cin >> t;	
-	// int t = 1, d = MOD;
-	string x;
-	while(t--){
-		int n, l ,d; cin >> n >> l >> d;
-		cin >> x;
-		l = x.size();
-		calc(x, n, l, d);
-	} 
+	vector<pii > x;
+	int n, m, j = 1;
+	cin >> m >> n;
+	while(m != 0 && n !=0)	{
+		x.clear();
+		if(m >2) SieveOfEratosthenes(m, m / 2, x); else if( m== 2) x.PB(MP(2, 1)); else 
+		if(n >2) SieveOfEratosthenes(n, n / 2, x); else x.PB(MP(2, 1));
+		sort(x.begin(), x.end());
+		int sum = 0;
+		FOR(i, 0, x.size()) {if(x[i].first == x[i + 1].first)  sum += x[i + 1].second - x[i++].second; else sum += x[i].second;}
+		vector<pii > :: iterator it = x.begin();
+		FOR(i, 0, x.size()) cout << x[i].first << " " << x[i].second << " , "; cout << endl;
+		for(; it < x.end() - 1; it++){
+			if((*it).first == ((*(it + 1)).first)) x.erase(it, it + 1);}
+		FOR(i, 0, x.size()) cout << x[i].first << " " << x[i].second << " , "; cout << endl;
+		cout << j++ << ". " <<x.size() << ":" << sum << endl;	
+		cin >> m >>n;
+	}
 return 0;
 }

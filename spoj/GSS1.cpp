@@ -1,3 +1,4 @@
+
 #include <iostream>
 #include <vector>
 #include <algorithm>
@@ -17,6 +18,7 @@
 #include <stack>
 #include <utility>
 using namespace std;
+#include <limits.h>
 
 #define s(n)    scanf("%d",&n)
 #define sl(n)   scanf("%lld",&n)
@@ -81,9 +83,6 @@ typedef vector<vl>  vvl;
 typedef list<int>   li;
 typedef map<int,int> mii;
 
-template<typename T> T modPow(T b, T e, T m=(ll)MOD){T res=1;while(e){if(!(e&0x1))res=(res*b)%m;e>>=1;b=(b*b)%m;}return res; }
-template<typename T> T gcd (T u, T v){ return (u==0||v==0||u==v)?(u|v):((~u&1)?((v&1)?gcd(u>>1,v):gcd(u>>1,v>>1)<<1):((~v&1)?gcd(u,v>>1):((u>v)?gcd((u-v)>>1,v):gcd((v-u)>>1,u)))); }
-template<typename T> T lcm (T a, T b){ return a*b/gcd(a,b); }
 //#undef DEBUG__
 ///////////////////////////////          FAST  IO          ///////////////////////////////////////
 #define gc getchar_unlocked
@@ -96,41 +95,47 @@ void si(int &n){
     for(;ch>47 && ch<58; ch=gc()) n = (n<<1)+(n<<3)+ch-48;
     if(neg)n=-n;
 }
-long long int dp[1000000+1][2];
-int calc(string &str, int n, int l, int d){
-	reverse(str.begin(), str.end());
-	str += string(n - str.size(), '0');
-	// reverse(str.begin(), str.end());
-	// cout << str << endl;
-	if(str[0] == '1') {dp[0][0] = 1; dp[0][1] = 1;}
-	else{
-		dp[0][1] = 0; dp[0][0] = 1;
-	}
-	FOR(i, 1, n){
-		// FOR(j, 0, 2){
-			if(str[i] == '1') {dp[i][0] = dp[i-1][0]; dp[i][1] = dp[i-1][0] + dp[i-1][1];}
-			else{
-				dp[i][0] = dp[i-1][0] + dp[i-1][1]; dp[i][1] = dp[i - 1][1];
+//////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////
 
-			dp[i][0] %= d; dp[i][1] %= d;
-			// }
-		}
-	}
-	// RNG(i, n) cout << dp[i][0] << " "; cout << endl;
-	// RNG(i, n) cout << dp[i][1] << " "; cout << endl;
-	cout << dp[n-1][0] << endl;
+void constructMinSegmentTree(int input[], int segTree[], int low, int high, int pos){
+
+  if(low == high) {segTree[pos] = input[low]; return;}
+  int mid = low + (high - low) / 2;
+  constructMinSegmentTree(input, segTree, low, mid, 2*pos + 1);
+  constructMinSegmentTree(input, segTree, mid + 1, high, 2*pos + 2);
+  segTree[pos] = (segTree[2 * pos + 1] + segTree [2 * pos + 2]);
+  return ;
 }
 
+void consructTree(int input[], int segTree[], int len_input){
+    constructMinSegmentTree(input, segTree, 0, len_input - 1, 0);
+}
+
+int rangeMinimumQuery(int segTree[], int qlow, int qhigh, int low, int high, int pos){
+    if(qlow <=low && qhigh >= high) return segTree [pos];
+    else if( qlow  > high || qhigh < low ) return INT_MIN;
+    else{
+      int mid = low + (high - low) / 2;
+      return MAX(rangeMinimumQuery(segTree, qlow, qhigh, low, mid, 2 * pos + 1) ,
+                 rangeMinimumQuery(segTree, qlow, qhigh, mid + 1, high, 2 * pos + 2));
+    }
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////
+int input[50002], segTree[250000];
 int main(){
 	std::ios::sync_with_stdio(false);
-	int t; cin >> t;	
-	// int t = 1, d = MOD;
-	string x;
-	while(t--){
-		int n, l ,d; cin >> n >> l >> d;
-		cin >> x;
-		l = x.size();
-		calc(x, n, l, d);
-	} 
+	int n, x, y;
+	si(n);
+	RNG(i, n) si (input[i]);
+	consructTree(input, segTree, n);
+	int m; si(m);
+	while(m--){
+		si(x); si(y);
+		printf("%d\n", rangeMinimumQuery(segTree, x - 1, y -1, 0, n-1, 0));
+		// rangeMinimumQuery(segTree, x - 1, y -1, 0, n-1, 0);
+	}
 return 0;
 }

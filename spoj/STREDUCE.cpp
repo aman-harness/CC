@@ -96,41 +96,36 @@ void si(int &n){
     for(;ch>47 && ch<58; ch=gc()) n = (n<<1)+(n<<3)+ch-48;
     if(neg)n=-n;
 }
-long long int dp[1000000+1][2];
-int calc(string &str, int n, int l, int d){
-	reverse(str.begin(), str.end());
-	str += string(n - str.size(), '0');
-	// reverse(str.begin(), str.end());
-	// cout << str << endl;
-	if(str[0] == '1') {dp[0][0] = 1; dp[0][1] = 1;}
-	else{
-		dp[0][1] = 0; dp[0][0] = 1;
-	}
-	FOR(i, 1, n){
-		// FOR(j, 0, 2){
-			if(str[i] == '1') {dp[i][0] = dp[i-1][0]; dp[i][1] = dp[i-1][0] + dp[i-1][1];}
-			else{
-				dp[i][0] = dp[i-1][0] + dp[i-1][1]; dp[i][1] = dp[i - 1][1];
+string str;
+int dp[300][300][5];
+// 0 -- A
+// 1 -- B
+// 2 -- AA
+// 3 -- BB
+// 4 -  AB
+// 5 -- BA
 
-			dp[i][0] %= d; dp[i][1] %= d;
-			// }
-		}
+
+int calc(int from, int to){
+	if(from == to){
+		if(str[from] == 'a') dp[from][from][0] = 1;
+		else dp[from][from][1] = 1;
+		return 0;
 	}
-	// RNG(i, n) cout << dp[i][0] << " "; cout << endl;
-	// RNG(i, n) cout << dp[i][1] << " "; cout << endl;
-	cout << dp[n-1][0] << endl;
+	else{
+		int mid = (from + to) / 2;
+		calc(from, mid);
+		calc(mid + 1, to);
+		if(dp[from][mid][0] && dp[mid + 1][to][0]) dp[from][to][0] = 1;
+		if(dp[from][mid][0] && dp[mid + 1][to][1]) dp[from][to][4] = 1;
+		if(dp[from][mid][0] && dp[mid + 1][to][1]) dp[from][to][4] = 1;
+		if(dp[from][mid][0] && dp[mid + 1][to][1]) dp[from][to][4] = 1;
+	}
 }
 
 int main(){
 	std::ios::sync_with_stdio(false);
-	int t; cin >> t;	
-	// int t = 1, d = MOD;
-	string x;
-	while(t--){
-		int n, l ,d; cin >> n >> l >> d;
-		cin >> x;
-		l = x.size();
-		calc(x, n, l, d);
-	} 
+	cin >> str;
+	cal(0, str.size() - 1);
 return 0;
 }

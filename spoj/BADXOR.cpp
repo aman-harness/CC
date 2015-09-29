@@ -1,3 +1,4 @@
+
 #include <iostream>
 #include <vector>
 #include <algorithm>
@@ -33,7 +34,7 @@ using namespace std;
 #define e2      second
 
 #define INF     (int)1e9
-#define MOD     (int)(1e9+7)
+#define MOD     1000000007
 #define LINF    (ll)1e18
 #define EPS     1e-11
 const double PI = acos(-1.0)
@@ -96,41 +97,38 @@ void si(int &n){
     for(;ch>47 && ch<58; ch=gc()) n = (n<<1)+(n<<3)+ch-48;
     if(neg)n=-n;
 }
-long long int dp[1000000+1][2];
-int calc(string &str, int n, int l, int d){
-	reverse(str.begin(), str.end());
-	str += string(n - str.size(), '0');
-	// reverse(str.begin(), str.end());
-	// cout << str << endl;
-	if(str[0] == '1') {dp[0][0] = 1; dp[0][1] = 1;}
-	else{
-		dp[0][1] = 0; dp[0][0] = 1;
-	}
-	FOR(i, 1, n){
-		// FOR(j, 0, 2){
-			if(str[i] == '1') {dp[i][0] = dp[i-1][0]; dp[i][1] = dp[i-1][0] + dp[i-1][1];}
-			else{
-				dp[i][0] = dp[i-1][0] + dp[i-1][1]; dp[i][1] = dp[i - 1][1];
 
-			dp[i][0] %= d; dp[i][1] %= d;
-			// }
-		}
-	}
-	// RNG(i, n) cout << dp[i][0] << " "; cout << endl;
-	// RNG(i, n) cout << dp[i][1] << " "; cout << endl;
-	cout << dp[n-1][0] << endl;
-}
-
-int main(){
-	std::ios::sync_with_stdio(false);
-	int t; cin >> t;	
-	// int t = 1, d = MOD;
-	string x;
+int main() {
+	// your code goes here
+	long long int m,n, temp, sum;
+	int t; cin >> t;
 	while(t--){
-		int n, l ,d; cin >> n >> l >> d;
-		cin >> x;
-		l = x.size();
-		calc(x, n, l, d);
-	} 
-return 0;
+		sum = 0;
+		cin >> n >> m;
+		long long int mark_b[1024], xor_set[1024], input[1024], xx[1024];
+		memset(mark_b, 0, sizeof(mark_b));
+		memset(xor_set, 0, sizeof(xor_set));
+		memset(xx, 0, sizeof(xx));
+		for(int i = 0; i < n; i++ ) cin >> input[i];
+		for(int i = 0; i < m; i++){
+			cin >> temp; mark_b[temp] = 1;
+		}
+		xor_set[0] = 1;
+		for(int i = 0; i < n; i++){
+			for(int j = 0 ; j < 1024; j++){
+				if(xor_set[j]) xx[j ^ input[i]] += xor_set[j] % MOD;
+			}
+			for(int k = 0; k < 1024; k++) {
+				xor_set[k] += xx[k] % MOD; xx[k] = 0;
+				xor_set[k] %= MOD;
+			}
+			if(!xor_set[0]) xor_set[input[i]]++;
+		}
+		for(int i= 0; i < 1024; i++){
+			if(!mark_b[i] && xor_set[i])  sum+= xor_set[i] % MOD; cout << sum << endl;
+			sum %= MOD;
+		}
+		cout << sum % MOD << endl;
+	}
+	return 0;
 }

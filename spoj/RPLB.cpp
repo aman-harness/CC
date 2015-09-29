@@ -1,3 +1,4 @@
+
 #include <iostream>
 #include <vector>
 #include <algorithm>
@@ -96,41 +97,56 @@ void si(int &n){
     for(;ch>47 && ch<58; ch=gc()) n = (n<<1)+(n<<3)+ch-48;
     if(neg)n=-n;
 }
-long long int dp[1000000+1][2];
-int calc(string &str, int n, int l, int d){
-	reverse(str.begin(), str.end());
-	str += string(n - str.size(), '0');
-	// reverse(str.begin(), str.end());
-	// cout << str << endl;
-	if(str[0] == '1') {dp[0][0] = 1; dp[0][1] = 1;}
-	else{
-		dp[0][1] = 0; dp[0][0] = 1;
-	}
-	FOR(i, 1, n){
-		// FOR(j, 0, 2){
-			if(str[i] == '1') {dp[i][0] = dp[i-1][0]; dp[i][1] = dp[i-1][0] + dp[i-1][1];}
-			else{
-				dp[i][0] = dp[i-1][0] + dp[i-1][1]; dp[i][1] = dp[i - 1][1];
-
-			dp[i][0] %= d; dp[i][1] %= d;
-			// }
-		}
-	}
-	// RNG(i, n) cout << dp[i][0] << " "; cout << endl;
-	// RNG(i, n) cout << dp[i][1] << " "; cout << endl;
-	cout << dp[n-1][0] << endl;
-}
 
 int main(){
 	std::ios::sync_with_stdio(false);
-	int t; cin >> t;	
-	// int t = 1, d = MOD;
-	string x;
+	int dp[1005][1005];
+	int t, n, limit; cin >> t;
+	int k = 0;
 	while(t--){
-		int n, l ,d; cin >> n >> l >> d;
-		cin >> x;
-		l = x.size();
-		calc(x, n, l, d);
-	} 
+		k++;
+		cin >> n >> limit;
+		int input[n];
+		RNG(i, n) cin >> input[i];
+		// cout << "input complete\n";
+		if(n == 1) {
+			if(input[0] > limit) cout <<"Scenario #" << k << ": " << 0 << endl;
+			else cout << "Scenario #" << k << ": " << input[0] << endl;
+			continue;
+		}
+		if(n == 2){
+			// if(input[1] + input[0] <=limit) 
+			// 	cout <<"Scenario #" << k << ": " << input[1] + input[0] << endl;
+			if(input[0] > limit && input[1] > limit) 
+				cout <<"Scenario #" << k << ": " << 0 << endl;
+			else if(max(input[0], input[1]) <= limit)
+				cout <<"Scenario #" << k << ": " << max(input[0], input[1]) << endl;
+			else if(input[0] > limit && input[1] <= limit)
+				cout <<"Scenario #" << k << ": " << input[1] << endl;
+			else cout <<"Scenario #" << k << ": " << input[0] << endl;
+			continue;
+		}
+		memset(dp, 0, sizeof(dp));
+		dp[0][input[0]] = 1;
+		dp[1][input[1]] = 1;
+		FOR(i, 2, n){
+			dp[i][input[i]] = 1;
+			FOR(j, 0, limit + 1){
+				// dp[i][j] = 1;
+				if(dp[i - 2][j] && (j + input[i]) <= limit) dp[i][j + input[i]] = 1;
+				if(dp[i- 2][j] == 1) dp[i][j] = 1;
+				if(i >= 3){
+					if(dp[i - 3][j] && (j + input[i]) <= limit) dp[i][j + input[i]] = 1;
+					if(dp[i- 3][j] == 1) dp[i][j] = 1;
+				}
+			}
+		}
+		int output = 0;
+		FOR(j, 0, limit + 1){
+			if(output < j && (dp[n-1][j] || dp[n-2][j])) output = j;
+		}
+		// RNG(i, limit) cout << i << " " << dp[n - 2][i] << " " << dp[n - 1][i] << endl; 
+		cout <<"Scenario #" << k << ": " << output << endl;
+	}
 return 0;
 }

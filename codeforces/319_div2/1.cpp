@@ -1,3 +1,4 @@
+
 #include <iostream>
 #include <vector>
 #include <algorithm>
@@ -81,56 +82,16 @@ typedef vector<vl>  vvl;
 typedef list<int>   li;
 typedef map<int,int> mii;
 
-template<typename T> T modPow(T b, T e, T m=(ll)MOD){T res=1;while(e){if(!(e&0x1))res=(res*b)%m;e>>=1;b=(b*b)%m;}return res; }
-template<typename T> T gcd (T u, T v){ return (u==0||v==0||u==v)?(u|v):((~u&1)?((v&1)?gcd(u>>1,v):gcd(u>>1,v>>1)<<1):((~v&1)?gcd(u,v>>1):((u>v)?gcd((u-v)>>1,v):gcd((v-u)>>1,u)))); }
-template<typename T> T lcm (T a, T b){ return a*b/gcd(a,b); }
-//#undef DEBUG__
-///////////////////////////////          FAST  IO          ///////////////////////////////////////
-#define gc getchar_unlocked
-void si(int &n){
-    register int ch=gc();
-    int neg = 0;
-    n=0;
-    while((ch<48||ch>57) && ch!='-')ch=gc();
-    if(ch=='-'){ neg=1; ch=gc(); }
-    for(;ch>47 && ch<58; ch=gc()) n = (n<<1)+(n<<3)+ch-48;
-    if(neg)n=-n;
-}
-long long int dp[1000000+1][2];
-int calc(string &str, int n, int l, int d){
-	reverse(str.begin(), str.end());
-	str += string(n - str.size(), '0');
-	// reverse(str.begin(), str.end());
-	// cout << str << endl;
-	if(str[0] == '1') {dp[0][0] = 1; dp[0][1] = 1;}
-	else{
-		dp[0][1] = 0; dp[0][0] = 1;
-	}
-	FOR(i, 1, n){
-		// FOR(j, 0, 2){
-			if(str[i] == '1') {dp[i][0] = dp[i-1][0]; dp[i][1] = dp[i-1][0] + dp[i-1][1];}
-			else{
-				dp[i][0] = dp[i-1][0] + dp[i-1][1]; dp[i][1] = dp[i - 1][1];
-
-			dp[i][0] %= d; dp[i][1] %= d;
-			// }
-		}
-	}
-	// RNG(i, n) cout << dp[i][0] << " "; cout << endl;
-	// RNG(i, n) cout << dp[i][1] << " "; cout << endl;
-	cout << dp[n-1][0] << endl;
-}
 
 int main(){
 	std::ios::sync_with_stdio(false);
-	int t; cin >> t;	
-	// int t = 1, d = MOD;
-	string x;
-	while(t--){
-		int n, l ,d; cin >> n >> l >> d;
-		cin >> x;
-		l = x.size();
-		calc(x, n, l, d);
-	} 
+	long long int n, x;
+	cin >> n >> x;
+	int count = 0;
+	if(x > n * n) {cout << "0\n"; return 0;}
+	else FOR(i, 1, n + 1){
+		if(x % i == 0 && x/i <= n) count++; 
+	}
+	cout << count << endl;
 return 0;
 }

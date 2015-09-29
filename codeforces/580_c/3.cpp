@@ -1,3 +1,4 @@
+
 #include <iostream>
 #include <vector>
 #include <algorithm>
@@ -81,56 +82,63 @@ typedef vector<vl>  vvl;
 typedef list<int>   li;
 typedef map<int,int> mii;
 
-template<typename T> T modPow(T b, T e, T m=(ll)MOD){T res=1;while(e){if(!(e&0x1))res=(res*b)%m;e>>=1;b=(b*b)%m;}return res; }
-template<typename T> T gcd (T u, T v){ return (u==0||v==0||u==v)?(u|v):((~u&1)?((v&1)?gcd(u>>1,v):gcd(u>>1,v>>1)<<1):((~v&1)?gcd(u,v>>1):((u>v)?gcd((u-v)>>1,v):gcd((v-u)>>1,u)))); }
-template<typename T> T lcm (T a, T b){ return a*b/gcd(a,b); }
-//#undef DEBUG__
-///////////////////////////////          FAST  IO          ///////////////////////////////////////
-#define gc getchar_unlocked
-void si(int &n){
-    register int ch=gc();
-    int neg = 0;
-    n=0;
-    while((ch<48||ch>57) && ch!='-')ch=gc();
-    if(ch=='-'){ neg=1; ch=gc(); }
-    for(;ch>47 && ch<58; ch=gc()) n = (n<<1)+(n<<3)+ch-48;
-    if(neg)n=-n;
-}
-long long int dp[1000000+1][2];
-int calc(string &str, int n, int l, int d){
-	reverse(str.begin(), str.end());
-	str += string(n - str.size(), '0');
-	// reverse(str.begin(), str.end());
-	// cout << str << endl;
-	if(str[0] == '1') {dp[0][0] = 1; dp[0][1] = 1;}
-	else{
-		dp[0][1] = 0; dp[0][0] = 1;
-	}
-	FOR(i, 1, n){
-		// FOR(j, 0, 2){
-			if(str[i] == '1') {dp[i][0] = dp[i-1][0]; dp[i][1] = dp[i-1][0] + dp[i-1][1];}
-			else{
-				dp[i][0] = dp[i-1][0] + dp[i-1][1]; dp[i][1] = dp[i - 1][1];
 
-			dp[i][0] %= d; dp[i][1] %= d;
-			// }
+pii edge[400005];
+bool cats[400005];
+bool visited[400005];
+int start[400005];
+int count_cats[400005];
+int max_cats;
+
+int paths = 0;
+int calc_paths(int n){
+	stack<int> blue;
+	int top,index = 1;
+	if(cats[1]) count_cats[1] = 1; else count_cats[1] = 0;
+	if(max_cats >= count_cats[1]) {blue.push(index);}
+	// int s_index = lower_bound(start + 1, start + n, index) - start;
+	// int e_index = upper_bound(start + 1, start + n, index) - start;
+	visited[1] = 1;
+	while(!blue.empty()){
+		index = blue.top();blue.pop();
+		if(!cats[index]) count_cats[index] = 0;
+		int s_index = lower_bound(start + 1, start + n + n - 1, index) - start;
+		int e_index = upper_bound(start + 1, start + n + n - 1, index) - start;
+		int flag = 1;
+		if(e_index - s_index == 1) paths++;
+		// if(flag) 
+		// cin >> paths;
+		FOR(i, s_index, e_index){
+			// cout << "In for loop: " << s_index << e_index << endl;
+			if(visited[edge[i].second]) continue;
+			if(count_cats[index] == max_cats) {if(!cats[edge[i].second]) {
+							blue.push(edge[i].second);
+							count_cats[edge[i].second] = 0;
+							visited[edge[i].second] = 1;
+						}
+				else continue;
+			}
+			else{
+				blue.push(edge[i].second);
+				visited[edge[i].second] = 1;
+				count_cats[edge[i].second] = count_cats[index] + cats[edge[i].second];
+			}
 		}
+		if(blue.empty()) break;
+		index = blue.top();
 	}
-	// RNG(i, n) cout << dp[i][0] << " "; cout << endl;
-	// RNG(i, n) cout << dp[i][1] << " "; cout << endl;
-	cout << dp[n-1][0] << endl;
+	cout << paths << endl;
 }
 
 int main(){
 	std::ios::sync_with_stdio(false);
-	int t; cin >> t;	
-	// int t = 1, d = MOD;
-	string x;
-	while(t--){
-		int n, l ,d; cin >> n >> l >> d;
-		cin >> x;
-		l = x.size();
-		calc(x, n, l, d);
-	} 
+	int n; cin >> n >> max_cats;
+	FOR(i, 1, n + 1) cin >> cats[i];
+	FOR(i, 1, n) {cin >> edge[i].first >> edge[i].second; start[i] = edge[i].first; edge[i + n -1].first = edge[i].second;edge[i + n -1].second = edge[i].first;
+				start[i + n - 1] = edge[i].second;
+				}
+	sort(edge + 1, edge + n + n - 1);
+	sort(start + 1, start + n + n - 1);
+	calc_paths(n);
 return 0;
 }
