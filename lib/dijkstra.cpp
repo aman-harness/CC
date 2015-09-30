@@ -1,4 +1,6 @@
+// dijkstra implementatiion 
 
+#include <bits/stdc++.h>
 #include <iostream>
 #include <vector>
 #include <algorithm>
@@ -17,7 +19,6 @@
 #include <numeric>
 #include <stack>
 #include <utility>
-#include <iterator>
 using namespace std;
 
 #define s(n)    scanf("%d",&n)
@@ -83,59 +84,61 @@ typedef vector<vl>  vvl;
 typedef list<int>   li;
 typedef map<int,int> mii;
 
-template<typename T> T modPow(T b, T e, T m=(ll)MOD){T res=1;while(e){if(!(e&0x1))res=(res*b)%m;e>>=1;b=(b*b)%m;}return res; }
-template<typename T> T gcd (T u, T v){ return (u==0||v==0||u==v)?(u|v):((~u&1)?((v&1)?gcd(u>>1,v):gcd(u>>1,v>>1)<<1):((~v&1)?gcd(u,v>>1):((u>v)?gcd((u-v)>>1,v):gcd((v-u)>>1,u)))); }
-template<typename T> T lcm (T a, T b){ return a*b/gcd(a,b); }
-//#undef DEBUG__
-///////////////////////////////          FAST  IO          ///////////////////////////////////////
-#define gc getchar_unlocked
-void si(int &n){
-    register int ch=gc();
-    int neg = 0;
-    n=0;
-    while((ch<48||ch>57) && ch!='-')ch=gc();
-    if(ch=='-'){ neg=1; ch=gc(); }
-    for(;ch>47 && ch<58; ch=gc()) n = (n<<1)+(n<<3)+ch-48;
-    if(neg)n=-n;
+ #define tr(container, it) \
+      for(typeof(container.begin()) it = container.begin(); it != container.end(); it++) 
+
+
+void dijkstra(int n, vector< list <pair <int , vi> > > &G, int s, int to){
+	// n: number of vertices
+	vi D(n, 987654321); 
+	priority_queue <pii, vector<pii>, greater <pii> > Q;
+	// int *D = new int[n];
+	// memset(D, 63, sizeof(D));
+	// RNG(i, n) D[i] = INT_MAX;
+	// vi path(n, -1);
+	// Assuming that 0 is the starting vertices.
+	D[0] = 0;
+	Q.push(pii(0, 0));
+
+	while(!Q.empty()){
+		pii top = Q.top();
+		Q.pop();
+		int v = top.second, d = top.first;
+		if(d <= D[v]){
+			tr(G[v], it){
+				int v2 = it -> first; int cost = it -> second[(d + s)% 24];
+				if(D[v2] > D[v] + cost) {
+					// update distance if possible
+					 D[v2] = D[v] + cost;
+					Q.push(pii(D[v2], v2));
+				}
+			}
+		}
+	}
+	// RNG(i, n) cout << D[i] << endl;
+	if(D[to] == 987654321) cout  << -1 << " ";
+	else cout << D[to] << " ";
 }
 int main(){
 	std::ios::sync_with_stdio(false);
-	int k; si(k); int cal[(k + 1)], candy[(k + 1)];
-	RNG(i, k) cin >> candy[i] >> cal[i];
-	ll sum = 0;
-	FOR(i, 0, k) sum += candy[i] * cal[i];
-	ll t = sum;
-	// int dp[2][*max_element(cal, cal + k) * 6 + 10];
-	sum /= 2; sum++;
-	long long dp[2][sum * 2];
-	memset(dp, 0, 2 * (sum + 10) *sizeof(int));
-	dp[0][0] = 1;
-	FOR(i, 1, candy[0] + 1) {if(cal[0] * i >= sum) break;  else dp[0][cal[0] * i] = 1; }
-
-	FOR(i, 1, k){
-		FOR(j, 0, sum){
-			if(dp[0][j]){
-				dp[1][j] += 1; //cout <<"Updated " << j << " as 1";
-				if((candy[i] + 1) * cal[i] + j < sum) {dp[1][(candy[i] + 1) * cal[i] + j] -= 1;}
-			}
+	int n, v, t, from, to, weight, s, k, at;
+	cin >> t;RNG(z, t){
+		vector< list <pair <int , vi> > > G;
+		list <pair <int , vi> > vpii;
+		cin >> n >> v >> k;
+		RNG(i, n) G.PB(vpii);
+		while(v--){
+			cin >> from >> to; from--; to--;
+			vi hours(24, 0); RNG(i, 24) cin >> hours[i];
+			G[from].PB(MP(to, hours));
+			G[to].PB(MP(from, hours));
 		}
-
-		// FOR(j, 0, sum) if(dp[1][j]) cout << i << " - " << j << " - "  << dp[1][j]<< endl; 
-		for(int gh = cal[i]; gh < 2 * cal[i]; gh++){
-			for(int j = gh; j < sum;){
-					dp[1][j] += dp[1][j - cal[i]];
-					j += cal[i];
-				}
-			}
-		// cout << endl << endl;
-		// FOR(j, 0, sum) if(dp[1][j]) cout << i << " " << j << " " << dp[1][j] << " "  <<endl; 
-		RNG(i, sum) dp[0][i] = dp[1][i];
-		RNG(i, sum) dp[1][i] = 0;
+		cout << "Case #" << z+1 << ": "; 
+		while(k--){
+			cin >> to >> at;
+			dijkstra(n, G, at, to - 1);
+		}
+		cout << endl;
 	}
-
-	int ret = 0;
-	FOR(i, 0, sum ) if(dp[0][i]) ret = i;
-
-	cout << t - 2 *ret;
 return 0;
 }
