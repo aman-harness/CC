@@ -1,4 +1,5 @@
 
+
 #include <iostream>
 #include <vector>
 #include <algorithm>
@@ -98,10 +99,66 @@ void si(int &n){
     if(neg)n=-n;
 }
 
+#define tr(container, it) \
+    for(typeof(container.begin()) it = container.begin(); it != container.end(); it++) 
+
+void bfs(int *key, vector<vi> &W, int N){
+	vi key_f(N + 1, true); vi V(N + 1, false); 
+	queue<int> Q; 	
+	Q.push(1);  V[1] = true; 
+	FOR(i, 1, N+1) if(key[i]) key_f[key[i]] = 0;
+
+	if(key[1]) key_f[key[1]] = 1;
+	vi temp;
+	while(!Q.empty()) { 
+	           int i = Q.front(); 
+	           // cout << "Front :" <<  i <<endl;
+	           Q.pop(); 
+	            tr(W[i], it) { 
+	                if(!V[*it]) {
+		                if(key_f[*it]){ 
+		                     V[*it] = true; 
+		                     key_f[key[*it]] = true;
+		                     Q.push(*it); 
+		                }
+		                else(temp.PB(*it));
+		            }
+	            }
+	          	tr(temp, itt){
+	          		if(!V[*itt]) {
+	          			if(key_f[*itt]){
+	          				V[*itt] = true;
+	          				key_f[key[*itt]] =true;
+	          				Q.push(*itt);
+	          				temp.erase(itt); itt--;
+	          				continue;
+	          			}
+	          		}
+	          	}
+	      } 
+	if(V[N]) cout << "Y\n"; else cout << "N\n";
+}
+
 int main(){
 	std::ios::sync_with_stdio(false);
-	queue<int>A;
-	A.push(3); queue<int> B = A;
- cout << B.size();
+	int N, y, x, z, a, b;
+	cin >> N >> y >> z;
+	while((N != -1) || (y != -1) || (z != -1)){
+		vi temp;
+		vector<vi> W;
+		FOR(i, 0, N + 1) W.PB(temp);
+		int *key = new int[N + 1];
+		RNG(i, N + 1) key[i] = 0;			
+		RNG(i, y){
+			cin >> a >> b;
+			key[a] = b;
+		}	
+		RNG(i, z){
+			cin >> a >> b;
+			W[a].PB(b); W[b].PB(a);
+		}
+		bfs(key, W, N);
+		cin >> N >> y >> z;
+	}
 return 0;
 }

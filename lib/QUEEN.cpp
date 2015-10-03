@@ -98,10 +98,37 @@ void si(int &n){
     if(neg)n=-n;
 }
 
+#define tr(container, it) \
+    for(typeof(container.begin()) it = container.begin(); it != container.end(); it++) 
+
+int w, b;
+
+int search(vi & neighbours){
+	while(i <= b){
+		
+	}
+}
+
+int bfs(int n, int start_vertex){
+	vi V(n, false);
+	queue<int> Q;
+	V[start_vertex] = true;
+	while(!Q.empty()){
+		int i = Q.front();
+		// Get the tail element from Queue.
+		Q.pop();
+		vi neighbours;
+		search(neighbours);
+		tr(neighbours, it){
+			if(!V[*it]){
+				V[*it] = true;
+				Q.push(*it);
+			}
+		}
+	}
+}
+
 int main(){
 	std::ios::sync_with_stdio(false);
-	queue<int>A;
-	A.push(3); queue<int> B = A;
- cout << B.size();
 return 0;
 }

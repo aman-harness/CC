@@ -82,26 +82,21 @@ typedef vector<vl>  vvl;
 typedef list<int>   li;
 typedef map<int,int> mii;
 
-template<typename T> T modPow(T b, T e, T m=(ll)MOD){T res=1;while(e){if(!(e&0x1))res=(res*b)%m;e>>=1;b=(b*b)%m;}return res; }
-template<typename T> T gcd (T u, T v){ return (u==0||v==0||u==v)?(u|v):((~u&1)?((v&1)?gcd(u>>1,v):gcd(u>>1,v>>1)<<1):((~v&1)?gcd(u,v>>1):((u>v)?gcd((u-v)>>1,v):gcd((v-u)>>1,u)))); }
-template<typename T> T lcm (T a, T b){ return a*b/gcd(a,b); }
-//#undef DEBUG__
-///////////////////////////////          FAST  IO          ///////////////////////////////////////
-#define gc getchar_unlocked
-void si(int &n){
-    register int ch=gc();
-    int neg = 0;
-    n=0;
-    while((ch<48||ch>57) && ch!='-')ch=gc();
-    if(ch=='-'){ neg=1; ch=gc(); }
-    for(;ch>47 && ch<58; ch=gc()) n = (n<<1)+(n<<3)+ch-48;
-    if(neg)n=-n;
-}
 
 int main(){
 	std::ios::sync_with_stdio(false);
-	queue<int>A;
-	A.push(3); queue<int> B = A;
- cout << B.size();
+	int n, first; cin >> n; vi input(n, 0); cin >> first; int init = first;
+	RNG(i, n - 1) cin >> input[i];
+	priority_queue <int> pq(input.begin(), input.end());
+	while(pq.top() >=first){
+		cout << "Pq. top -- " << pq.top() << endl;
+		if(pq.top() == first) {
+			first++; break;
+		}
+		first += (pq.top() - first + 1) / 2;
+		pq.pop();
+	}
+	cout << first - init<< endl;
+
 return 0;
 }

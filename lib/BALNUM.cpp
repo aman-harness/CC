@@ -98,10 +98,27 @@ void si(int &n){
     if(neg)n=-n;
 }
 
+long long calc( string str){
+	reverse(ALL(str));
+	long long int dp[LEN(str) + 5][10][2];
+	memset(dp, 0, sizeof(dp));
+	FOR(i, 1, 10){
+		dp[0][i][0] = (i +1) % 2;
+		dp[0][i][1] = i % 2;
+	}
+	dp[0][0][0] = 0;
+	dp[0][0][1] = 1;
+
+	FOR(i, 1, LEN(str)){
+		FOR(j, 1, 10){
+			
+		}
+	}
+}
+
 int main(){
 	std::ios::sync_with_stdio(false);
-	queue<int>A;
-	A.push(3); queue<int> B = A;
- cout << B.size();
+	string str; cin >> str;
+	calc(str);
 return 0;
 }

@@ -100,8 +100,22 @@ void si(int &n){
 
 int main(){
 	std::ios::sync_with_stdio(false);
-	queue<int>A;
-	A.push(3); queue<int> B = A;
- cout << B.size();
+	int t; cin >> t;
+	string str;
+	while(t--){
+		cin >> str;
+		int dp[str.size() + 2];
+		memset(dp, 0, sizeof(dp));
+		dp[0] = 0;
+
+		FOR(i, 0, str.size()){
+			dp[i] = 1;
+			FOR(j, 0, i){
+				if(str[j] < str[i]) dp[i] += dp[j];
+			}
+		}
+		// cout << dp[str.size() - 1];
+		cout << accumulate(dp, dp + str.size(),0) << endl;
+	}
 return 0;
 }

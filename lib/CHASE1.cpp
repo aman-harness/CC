@@ -1,4 +1,3 @@
-
 #include <iostream>
 #include <vector>
 #include <algorithm>
@@ -97,11 +96,116 @@ void si(int &n){
     for(;ch>47 && ch<58; ch=gc()) n = (n<<1)+(n<<3)+ch-48;
     if(neg)n=-n;
 }
+vvi G;
+#define tr(container, it) \
+    for(typeof(container.begin()) it = container.begin(); it != container.end(); it++) 
+map<pii, int> m;
+
+int do_map(queue<int> &A, queue<int> &B){
+	int flag = 0;
+	while(!A.empty()){
+		int x = A.front();
+		A.pop();
+		queue <int> temp = B;
+		while(!B.empty()){
+			int y = B.front();
+			B.pop();
+			if(m[MP(x, y)] == 0){
+				flag = 1;
+				m[MP(x, y)] = 1;
+			}
+		}
+		B = temp;
+	}
+	queue <int> empty;
+	A = empty;
+	B = empty;
+	if(flag) {
+		// cout << "I marked some\n";
+		return 1;}
+	else {
+		// cout << "I did some\n";
+		return 0;}
+}
+
+int bfs(int n, int start_vertex, int run_vertex){
+	queue<int> Q, P, A, B, last;
+	Q.push(start_vertex);
+	A.push(run_vertex);
+	last = A;
+	if(start_vertex == run_vertex) return 1;
+	set<int> temp;
+	int count  = 0;
+	while(1){
+		count++;
+		while(!Q.empty()){
+			// int z;cin >> z;
+			int i = Q.front();
+			// cout << "in 1st: " << i << endl;
+			Q.pop();
+			tr(G[i], it){
+				// cout << "Inserting: " << *it << " ";
+				temp.insert(*it);
+			}
+			temp.insert(i);
+		}
+		tr(temp, iit){
+				P.push(*iit);
+			}
+			temp.clear();
+
+		// cout << "Between\n";
+		while(!A.empty()){
+			int i = A.front();
+			// cout << "in 2nd: " << i << endl;
+			A.pop();
+			tr(G[i], it){
+				temp.insert(*it);
+			}
+			temp.insert(i);
+		}
+
+		tr(temp, iit){
+			B.push(*iit);
+		}
+		temp.clear();
+		// int xc; cin >> xc;
+		Q = P;
+		A = B;
+		queue <int> print = P;
+		// cout << endl;
+		// while(!print.empty()) {cout << print.front() << " "; print.pop();}cout << endl;
+		print = B;
+		// while(!print.empty()) {cout << print.front() << " "; print.pop();}cout << endl;
+		if(last == P) return count - 1;
+		else last = B;
+		if(B == P) return count;
+		if (!do_map(B, P)) break;
+		while(!P.empty()) P.pop();
+		while(!B.empty()) B.pop();
+	}
+	return 0;
+}
 
 int main(){
 	std::ios::sync_with_stdio(false);
-	queue<int>A;
-	A.push(3); queue<int> B = A;
- cout << B.size();
+	int t; cin >> t;
+	int n, mm, a, b, c, v;
+	while(t--){
+		m.clear();
+		vi x;
+		cin >> n >> mm >> a >> b;
+		RNG(i, n + 1) G.push_back(x);
+		while(mm--){
+			cin >> c >> v;
+			G[c].PB(v);
+			G[v].PB(c);
+		}
+		int zz =bfs(n, a, b);
+		if(zz)  cout << zz << endl;
+		else cout << "No\n";
+		RNG(i, n + 1) G[i].clear();
+		G.clear();
+	}
 return 0;
 }

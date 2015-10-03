@@ -100,8 +100,7 @@ void si(int &n){
 
 int main(){
 	std::ios::sync_with_stdio(false);
-	queue<int>A;
-	A.push(3); queue<int> B = A;
- cout << B.size();
+	vi answer() 0);
+
 return 0;
 }
